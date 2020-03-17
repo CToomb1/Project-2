@@ -17,7 +17,7 @@ VALUES
   ('CEO', 3,000.00, 2);
   ('Manager', 2,500, 3);
 
-  INSERT INTO employee
+  INSERT INTO empName
   (first_name, last_name, role_id);
   ('Alyssa', 'Tung', 1);
   ('Catherine', 'Adegoke', 2);
