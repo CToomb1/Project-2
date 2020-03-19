@@ -19,37 +19,37 @@ const getShifts = function() {
     return $.ajax({
       url: "/api/shifts",
       method: "GET"
-    });
-  };
+  });
+};
 
 // A function for saving a note to the db
-const saveShift = function(shift) {
+const saveShift = function (shift) {
   return $.ajax({
     url: "/api/shifts",
-    data: note,
+    data: shift,
     method: "POST"
   });
 };
-const saveEmp = function(emp) {
-    return $.ajax({
-      url: "/api/emp",
-      data: note,
-      method: "POST"
-    });
-  };
+const saveEmp = function (emp) {
+  return $.ajax({
+    url: "/api/emp",
+    data: emp,
+    method: "POST"
+  });
+};
 
 // A function for deleting a note from the db
-const deleteShifts = function(id) {
+const deleteShifts = function (id) {
   return $.ajax({
     url: "api/Shifts/" + id,
     method: "DELETE"
   });
 };
-var deleteEmp = function(id) {
-    return $.ajax({
-      url: "api/emp/" + id,
-      method: "DELETE"
-    });
+var deleteEmp = function (id) {
+  return $.ajax({
+    url: "api/emp/" + id,
+    method: "DELETE"
+  });
   };
 
 // If there is an activeNote, display it, otherwise render empty inputs
@@ -73,16 +73,16 @@ var renderActiveEmp = function() {
     $saveEmpBtn.hide();
   console.log 
     if (activeEmp.id) {
-      $empTitle.attr("readonly", true);
-      $empName.attr("readonly", true);
-      $empTitle.val(activeNote.title);
-      $empName.val(activeNote.text);
-    } else {
-      $nempTitle.attr("readonly", false);
-      $empName.attr("readonly", false);
-      $empTitle.val("");
-      $empName.val("");
-    }
+    $empTitle.attr("readonly", true);
+    $empName.attr("readonly", true);
+    $empTitle.val(activeNote.title);
+    $empName.val(activeNote.text);
+  } else {
+    $nempTitle.attr("readonly", false);
+    $empName.attr("readonly", false);
+    $empTitle.val("");
+    $empName.val("");
+  }
   };
 
 // Get the employee data from the inputs, save it to the db and update the view
@@ -107,7 +107,7 @@ var handleShiftSave = function() {
       getAndRenderShifts();
       renderActiveShifts();
     });
-  };
+};
   
 
 // Delete the clicked note
@@ -134,11 +134,11 @@ var handleShiftDelete = function(event) {
     // prevents the click listener for the list from being called when the button inside of it is clicked
     event.stopPropagation();
   
-    var shift = $(this)
+  var shift = $(this)
     //   .parent(".list-group-item")
-      .data();
-  
-    if (activeShift.id === shift.id) {
+    .data();
+
+  if (activeShift.id === shift.id) {
       activeShifts = {};
     }
   
@@ -146,7 +146,7 @@ var handleShiftDelete = function(event) {
       console.log('hi')
       getAndRenderShifts();
       renderActiveShifts();
-    });
+  });
   };
 
 // display employees 
@@ -182,7 +182,7 @@ var handleShiftsView = function() {
 //   }
 // };
 
- Render's the list of employees and Shifts 
+// Render's the list of employees and Shifts 
 // var renderNoteList = function(notes) {
 //   $noteList.empty();
 //   console.log(notes);
@@ -205,85 +205,86 @@ var handleShiftsView = function() {
 // };
 
 
-var getAndRenderEmp = function() {
-  return getEmp().then(function(data) {
+var getAndRenderEmp = function () {
+  return getEmp().then(function (data) {
     // renderEmpList(data);
   });
 };
-var getAndRenderShifts = function() {
-    return getShifts().then(function(data) {
+var getAndRenderShifts = function () {
+  return getShifts().then(function (data) {
+    notess.val(data.name);
     //   renderShiftList(data);
-    });
-  };
-
-$saveEmpBtn.on("click", handleEmpSave);
-$empList.on("click", ".list-group-item", handleNoteView);
-$newEmpBtn.on("click", handleNewEmpView);
-$empList.on("click", ".delete-emp", handleEmpDelete);
-
-$saveShiftBtn.on("click", handleShiftSave);
-$shiftList.on("click", ".list-group-item", handleshiftView);
-$newShiftBtn.on("click", handleNewNoteView);
-$shiftList.on("click", ".delete-shift", handleShiftDelete);
-
-
-getAndRenderEmp();
-getAndRenderShifts();
-
-
-
-
-
-
-
-
-another way to get the data
-
-
-$('#emp-form').on('submit', function(event) {
-    event.preventDefault();
-  
-    // collect emp name as objects 
-    const empData = {
-      emp_name: $('[name=emp-name]')
-        .val()
-        .trim()
-    };
-  
-    $.ajax({
-      url: '/api/emps',
-      method: 'POST',
-      data: empData
-    }).then(response => {
-      console.log(response);
-      location.reload();
-    });
   });
+};
 
-  $('#shift-form').on('submit', function(event) {
-    event.preventDefault();
-  
-    // collect form data as an object
-    const shiftData = {
-      shift_name: $('[shift=shift-name]')
-        .val()
-        .trim()
-    };
-  
-    $.ajax({
-      url: '/api/shifts',
-      method: 'POST',
-      data: ShiftData
-    }).then(response => {
-      console.log(response);
-      location.reload();
-    });
-  });
-  
+// $saveEmpBtn.on("click", handleEmpSave);
+// $empList.on("click", ".list-group-item", handleNoteView);
+// $newEmpBtn.on("click", handleNewEmpView);
+// $empList.on("click", ".delete-emp", handleEmpDelete);
+
+// $saveShiftBtn.on("click", handleShiftSave);
+// $shiftList.on("click", ".list-group-item", handleshiftView);
+// $newShiftBtn.on("click", handleNewNoteView);
+// $shiftList.on("click", ".delete-shift", handleShiftDelete);
+
+
+// getAndRenderEmp();
+//getAndRenderShifts();
+
+
+
+
+
+
+
+
+//another way to get the data
+
+
+// $('#emp-form').on('submit', function(event) {
+//     event.preventDefault();
+
+//     // collect emp name as objects 
+//     const empData = {
+//       emp_name: $('[name=emp-name]')
+//         .val()
+//         .trim()
+//     };
+
+//     $.ajax({
+//       url: '/api/emps',
+//       method: 'POST',
+//       data: empData
+//     }).then(response => {
+//       console.log(response);
+//       location.reload();
+//     });
+//   });
+
+//   $('#shift-form').on('submit', function(event) {
+//     event.preventDefault();
+
+//     // collect form data as an object
+//     const shiftData = {
+//       shift_name: $('[shift=shift-name]')
+//         .val()
+//         .trim()
+//     };
+
+//     $.ajax({
+//       url: '/api/shifts',
+//       method: 'POST',
+//       data: ShiftData
+//     }).then(response => {
+//       console.log(response);
+//       location.reload();
+//     });
+//   });
+
 //   $('.adoptCat').on('click', function() {
 //     // get id of cat we are adopting
 //     const catId = $(this).attr('data-catid');
-  
+
 //     $.ajax({
 //       url: `/api/cats/${catId}`,
 //       method: 'PUT',
@@ -295,32 +296,31 @@ $('#emp-form').on('submit', function(event) {
 //       location.reload();
 //     });
 //   });
-  
-  $('.deleteEmp').on('click', function() {
-    
-    const empId = $(this).attr('data-empid');
-  
-    // delete emp
-    $.ajax({
-      url: `/api/emp/${empId}`,
-      method: 'DELETE'
-    }).then(response => {
-      console.log(response);
-      location.reload();
-    });
-  });
 
-  $('.deleteShift').on('click', function() {
-    
-    const shiftId = $(this).attr('data-shiftid');
-  
-    // delete shift
-    $.ajax({
-      url: `/api/emp/${shiftId}`,
-      method: 'DELETE'
-    }).then(response => {
-      console.log(response);
-      location.reload();
-    });
-  });
-  
+  // $('.deleteEmp').on('click', function() {
+
+  //   const empId = $(this).attr('data-empid');
+
+  //   // delete emp
+  //   $.ajax({
+  //     url: `/api/emp/${empId}`,
+  //     method: 'DELETE'
+  //   }).then(response => {
+  //     console.log(response);
+  //     location.reload();
+  //   });
+  // });
+
+  // $('.deleteShift').on('click', function() {
+
+  //   const shiftId = $(this).attr('data-shiftid');
+
+  //   // delete shift
+  //   $.ajax({
+  //     url: `/api/emp/${shiftId}`,
+  //     method: 'DELETE'
+  //   }).then(response => {
+  //     console.log(response);
+  //     location.reload();
+  //   });
+  // });

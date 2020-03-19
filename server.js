@@ -17,6 +17,15 @@ app.get('/shifts', (req, res) => {
     res.sendFile(path.join(__dirname, './public/shifts.html'));
 });
 
+app.get('/employees', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/employees.html'));
+});
+
+app.post('/api/emp', (req, res) => {
+    dbitems.createEmp(req.body);
+    console.log(req.body);
+});
+
 app.get('/api/shifts', (req, res) => {
     // let results = dbitems.viewShifts();
     // res.json(results);
