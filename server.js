@@ -1,13 +1,12 @@
 const express = require('express');
-const path = require('path');
-const dbitems = require('./lib/db_items.js');
+const routes = require('./routes');
+const sequelize = require('./config/connection');
 
-const PORT = process.env.PORT || 1338;
 const app = express();
+const PORT = process.env.PORT || 3001;
 
-app.use(express.static('public'));
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'));
@@ -29,12 +28,13 @@ app.post('/api/emp', (req, res) => {
 app.get('/api/shifts', (req, res) => {
     // let results = dbitems.viewShifts();
     // res.json(results);
-
-    dbitems.viewShifts(function(data) {
-        res.json(data);
-    });
 });
+// if you have a front-end...use express.static('public')
 
-app.listen(PORT, () => {
-    console.log(`API server now on port ${PORT}!`);
+// turn on routes
+app.use(routes);
+
+// turn on connection to db and server
+sequelize.sync({ force: false }).then(() => {
+  app.listen(PORT, () => console.log('Now listening'));
 });
