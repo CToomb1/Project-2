@@ -5,7 +5,10 @@ const connection = require('../config/connection');
 
 const createEmp = empDataObj => {
   return new Promise((resolve, reject) => {
-    connection.query('INSERT INTO employee SET ?', empDataObj, (err, empData) => {
+    let fname = empDataObj.first_name;
+    let lname = empDataObj.last_name;
+    let tname = empDataObj.title;
+    connection.query('INSERT INTO employee (first_name, last_name, title) VALUES (?, ?, ?)', [fname, lname, tname], (err, empData) => {
       if (err) {
         consola.log(err);
         reject(err);
