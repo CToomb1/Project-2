@@ -1,51 +1,92 @@
 
-$('#chirp-submit').on('click', function(event) {
+$('#emp-submit').on('click', function(event) {
+  event.preventDefault();
+
+  
+  const newEmp = {
+    first_Name: $('#fname')
+      .val()
+      .trim(),
+      last_Name: $('#lname')
+      .val()
+      .trim(),
+      title: $('#tittle')
+      .val()
+      .trim(),
+    
+  };
+
+  console.log(newEmp);
+
+  $.post('/api/new', newEmp)
+  
+    .then(function() {
+      const row = $('<div>');
+      row.addClass('emp');
+
+      row.append(`<p>${newEmp.first_Name}</p>`);
+      row.append(`<p>${newEmp.last_Name}</p>`);
+      row.append(`<p>${newEmp.tittle}</p>`);
+      
+
+      $('#emp-add').prepend(row);
+    });
+
+  $('#fname').val('');
+  $('#lname').val('');
+  $('#title').val('');
+});
+
+
+$('#emp-submit').on('click', function(event) {
   event.preventDefault();
 
   // Make a newChirp object
-  const newChirp = {
-    author: $('#author')
+  const newShift = {
+    comment: $('#comment')
       .val()
       .trim(),
-    body: $('#chirp-box')
+      time :$('#time')
       .val()
       .trim(),
-    created_at: moment().format('YYYY-MM-DD HH:mm:ss')
+      Date: $('#date')
+      .val()
+      .trim(),
   };
 
-  console.log(newChirp);
+  console.log(newShift);
 
-  // Send an AJAX POST-request with jQuery
-  $.post('/api/new', newChirp)
-    // On success, run the following code
+  $.post('/api/new', newShift)
+  
     .then(function() {
       const row = $('<div>');
-      row.addClass('chirp');
+      row.addClass('shift');
 
-      row.append(`<p>${newChirp.author} chirped: </p>`);
-      row.append(`<p>${newChirp.body}</p>`);
-      row.append(`<p>At ${moment(newChirp.created_at).format('h:mma on dddd')}</p>`);
+      row.append(`<p>${newShift.time}</p>`);
+      row.append(`<p>${newShift.date}</p>`);
+      row.append(`<p>${newShift.comment}</p>`);
+      
 
-      $('#chirp-area').prepend(row);
+      $('#shift-add').prepend(row);
     });
 
-  // Empty each input box by replacing the value with an empty string
-  $('#author').val('');
-  $('#chirp-box').val('');
+  $('#comment').val('');
+  $('#date').val('');
+  $('#time').val('');
 });
 
-// When the page loads, grab all of our chirps
-$.get('/api/all', function(data) {
-  if (data.length !== 0) {
-    for (let i = 0; i < data.length; i++) {
-      const row = $('<div>');
-      row.addClass('chirp');
+// // When the page loads, grab all of our chirps
+// $.get('/api/all', function(data) {
+//   if (data.length !== 0) {
+//     for (let i = 0; i < data.length; i++) {
+//       const row = $('<div>');
+//       row.addClass('chirp');
 
-      row.append(`<p>${data[i].author} chirped.. </p>`);
-      row.append(`<p>${data[i].body}</p>`);
-      row.append(`<p>At ${moment(data[i].created_at).format('h:mma on dddd')} </p>`);
+//       row.append(`<p>${data[i].author} chirped.. </p>`);
+//       row.append(`<p>${data[i].body}</p>`);
+//       row.append(`<p>At ${moment(data[i].created_at).format('h:mma on dddd')} </p>`);
 
-      $('#chirp-area').prepend(row);
-    }
-  }
-});
+//       $('#chirp-area').prepend(row);
+//     }
+//   }
+// });

@@ -6,9 +6,10 @@ class shift extends Model {}
 
 shift.init(
   {
-    author: DataTypes.STRING,
-    body: DataTypes.STRING,
-    created_at: DataTypes.DATE
+    date: DataTypes.DATE,
+    time: DataTypes.TIME,
+    comment: DataTypes.STRING,
+    
   },
   {
     sequelize
