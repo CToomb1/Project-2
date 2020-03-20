@@ -24,7 +24,10 @@ app.get('/employees', (req, res) => {
 
 app.post('/api/emp', (req, res) => {
     dbitems.createEmp(req.body);
-    console.log(req.body);
+});
+
+app.post('/api/shifts', (req, res) => {
+    dbitems.createShift(req.body);
 });
 
 app.get('/api/shifts', (req, res) => {

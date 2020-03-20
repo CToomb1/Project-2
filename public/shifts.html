@@ -28,9 +28,10 @@
       let etime = $("#end_time").val();
       let empnum = $("#num_needed").val();
       let comments = $("#comments").val();
-
+      let shname = $("#shift_name").val();
 
       var newShift = {
+        name: shname,
         date: date,
         start_time: stime,
         end_time: etime,
@@ -39,11 +40,19 @@
       };
 
       saveShift(newShift).then(function (data) {
-
+        
       });
 
       closeShiftsPopup();
     }
+
+    const saveShift = function (shiftData) {
+      return $.ajax({
+        url: "/api/shifts",
+        data: shiftData,
+        method: "POST"
+      });
+    };
   </script>
 </head>
 

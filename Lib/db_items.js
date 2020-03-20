@@ -1,8 +1,6 @@
 const consola = require('consola');
 const connection = require('../config/connectionmysql');
 
-
-
 const createEmp = empDataObj => {
   return new Promise((resolve, reject) => {
     let fname = empDataObj.first_name;
@@ -17,14 +15,18 @@ const createEmp = empDataObj => {
 
       resolve(empData);
     });
-
-
   });
 };
 
 const createShift = ShiftDataObj => {
+  let name = ShiftDataObj.name;
+  let day = ShiftDataObj.date;
+  let start_time = ShiftDataObj.start_time;
+  let end_time = ShiftDataObj.end_time;
+  let num_emp = ShiftDataObj.number_of_employees;
+  let comments = ShiftDataObj.commets;
   return new Promise((resolve, reject) => {
-    connection.query('INSERT INTO shift SET ?', ShiftDataObj, (err, shiftData) => {
+    connection.query('INSERT INTO shift (name, day, start_time, end_time, num_needed, comments) VALUES (?, ?, ?, ?, ?, ?)', [name, day, start_time, end_time, num_emp, comments], (err, shiftData) => {
       if (err) {
         consola.error(err);
         reject(err);
@@ -32,7 +34,6 @@ const createShift = ShiftDataObj => {
       }
       return (shiftData);
     });
-
   });
 };
 
