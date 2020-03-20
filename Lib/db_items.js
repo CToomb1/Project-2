@@ -1,5 +1,5 @@
 const consola = require('consola');
-const connection = require('../config/connection');
+const connection = require('../config/connectionmysql');
 
 
 

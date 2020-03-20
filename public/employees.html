@@ -20,18 +20,33 @@
             $(".modal").removeClass("is-active");
         }
 
-        function saveNewEmployee() {
-            let fname = $("#first_name").val();
-            let lname = $("#last_name").val();
-            let title = $("#title").val();
-            let emp = {first_name: fname,
-                       last_name: lname,
-                       title: title};
-            saveEmp(emp);
+        function handleEmpSave() {
+            let fname = $('#first_name').val();
+            let lname = $('#last_name').val();
+            let tname = $('#title').val();
+            //this is where all the checking for empty strings, etc should be done
+            var newEmp = {
+                title: tname,
+                first_name: fname,
+                last_name: lname
+            };
+
+            saveEmp(newEmp).then(function (data) {
+                //getAndRenderEmp();
+                renderActiveEmp();
+            });
+
             closeEmployeePopup();
         }
 
-    
+        const saveEmp = function (emp) {
+            alert("hi");
+            return $.ajax({
+                url: "/api/emp",
+                data: emp,
+                method: "POST"
+            });
+        };
 
     </script>
 
@@ -70,7 +85,7 @@
     </nav>
 
 
-<!-- Create employees button -->
+    <!-- Create employees button -->
     <input type="button" value="Create Employees" onclick="createEmployees()">
 
     <div class="modal">
@@ -86,7 +101,7 @@
                 <input type="text" id="title" placeholder="Employee Title" />
             </section>
             <footer class="modal-card-foot">
-                <button onclick="saveNewEmployee()" class="button is-success">Save</button>
+                <button onclick="handleEmpSave()" class="button is-success">Save</button>
                 <button onclick="closeEmployeePopup()" class="button">Cancel</button>
             </footer>
         </div>
@@ -101,7 +116,7 @@
     <a class="btn btn-primary btn-lg mt-4" href="/notes" role="button">Get Started</a>
   </div> -->
 
-    <script src="index.js"></script>
+
 </body>
 
 </html>
