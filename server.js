@@ -1,7 +1,12 @@
 const express = require('express');
 const routes = require('./routes');
+const path = require("path");
 const sequelize = require('./config/connection');
+<<<<<<< HEAD
 const path = require('path');
+=======
+const dbitems = require('./Lib/db_items.js');
+>>>>>>> 0dbd8e3f96ca8c331ff019a4f8709343756844f9
 
 const app = express();
 const PORT = process.env.PORT || 3001;
