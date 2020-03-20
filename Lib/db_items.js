@@ -38,43 +38,17 @@ const createShift = ShiftDataObj => {
 };
 
 const viewShifts = (callBack) => {
-
-  return connection.query('SELECT * FROM shift', (err, Data) => {
-    if (err) {
-      consola.error(err);
-      connection.end();
-      //reject(err);
-      return;
-    }
-    console.table(Data);
-    var normalObj = Object.assign({}, Data[0]);
-    connection.end();
-
-
-
-    callBack(normalObj);
-    //return (normalObj);
-
+  let sqlquery = "SELECT * FROM shift ";
+  connection.query(sqlquery, function(err, results) {
+    callBack(results);
   });
 };
-const viewEmp = (callBack) => {
 
+const viewEmp = (callBack) => {
   let sqlquery = "SELECT * FROM employee ";
   connection.query(sqlquery, function(err, results) {
     callBack(results);
   });
-
-  // return connection.query('SELECT * FROM employee', (err, Data) => {
-  //   if (err) {
-  //     consola.error(err);
-  //     reject(err);
-  //     return;
-  //   }
-  //   console.table(Data)
-  //   return Data;
-
-  // });
-
 };
 
 const updateEmp = (empObj, empId) => {

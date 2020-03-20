@@ -37,8 +37,9 @@ app.post('/api/shifts', (req, res) => {
 });
 
 app.get('/api/shifts', (req, res) => {
-    // let results = dbitems.viewShifts();
-    // res.json(results);
+    dbitems.viewShifts(function(results) {
+        res.json(results);
+    });
 });
 // if you have a front-end...use express.static('public')
 
