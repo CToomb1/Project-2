@@ -24,7 +24,7 @@ const createShift = ShiftDataObj => {
   let start_time = ShiftDataObj.start_time;
   let end_time = ShiftDataObj.end_time;
   let num_emp = ShiftDataObj.number_of_employees;
-  let comments = ShiftDataObj.commets;
+  let comments = ShiftDataObj.comments;
   return new Promise((resolve, reject) => {
     connection.query('INSERT INTO shift (name, day, start_time, end_time, num_needed, comments) VALUES (?, ?, ?, ?, ?, ?)', [name, day, start_time, end_time, num_emp, comments], (err, shiftData) => {
       if (err) {
