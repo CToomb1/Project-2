@@ -8,6 +8,43 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
   <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+  <script>
+    function createShifts() {
+      $(".modal").addClass("is-active");
+      $("#date").val("");
+      $("#start_time").val("");
+      $("#end_time").val("");
+      $("#num_needed").val("");
+      $("#comments").val("");
+    }
+    function closeShiftsPopup() {
+      $(".modal").removeClass("is-active");
+    }
+
+    function handleShiftSave() {
+      let date = $("#date").val();
+      let stime = $("#start_time").val();
+      let etime = $("#end_time").val();
+      let empnum = $("#num_needed").val();
+      let comments = $("#comments").val();
+
+
+      var newShift = {
+        date: date,
+        start_time: stime,
+        end_time: etime,
+        number_of_employees: empnum,
+        comments: comments
+      };
+
+      saveShift(newShift).then(function (data) {
+
+      });
+
+      closeShiftsPopup();
+    }
+  </script>
 </head>
 
 <body>
@@ -41,6 +78,34 @@
     </div>
     </div>
   </nav>
+
+
+  <!-- Create shifts button -->
+  <input type="button" value="Create Shifts" onclick="createShifts()">
+
+  <div class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Create New Shift</p>
+        <button class="delete" onclick="closeShiftsPopup()" aria-label="close"></button>
+      </header>
+      <section class="modal-card-body">
+        <input type="text" id="shift_name" placeholder="Shift Name" />
+        <input type="text" id="date" placeholder="Date" />
+        <input type="text" id="start_time" placeholder="Start Time" />
+        <input type="text" id="end_time" placeholder="End Time" />
+        <input type="text" id="num_needed" placeholder="Number of Employees Needed" />
+        <input type="text" id="comments" placeholder="Comments" />
+      </section>
+      <footer class="modal-card-foot">
+        <button onclick="handleShiftSave()" class="button is-success">Save</button>
+        <button onclick="closeShiftsPopup()" class="button">Cancel</button>
+      </footer>
+    </div>
+  </div>
+
+
 
 
 
