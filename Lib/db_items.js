@@ -57,18 +57,23 @@ const viewShifts = (callBack) => {
 
   });
 };
-const viewEmp = () => {
+const viewEmp = (callBack) => {
 
-  return connection.query('SELECT * FROM employee', (err, Data) => {
-    if (err) {
-      consola.error(err);
-      reject(err);
-      return;
-    }
-    console.table(Data)
-    return Data;
-
+  let sqlquery = "SELECT * FROM employee ";
+  connection.query(sqlquery, function(err, results) {
+    callBack(results);
   });
+
+  // return connection.query('SELECT * FROM employee', (err, Data) => {
+  //   if (err) {
+  //     consola.error(err);
+  //     reject(err);
+  //     return;
+  //   }
+  //   console.table(Data)
+  //   return Data;
+
+  // });
 
 };
 

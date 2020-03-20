@@ -9,7 +9,14 @@
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
+    <style type="text/css">
+        .empRecord {
+            color:red;
+        }
+    </style>
+
     <script>
+        
         function createEmployees() {
             $(".modal").addClass("is-active");
             $("#first_name").val("");
@@ -33,14 +40,36 @@
 
             saveEmp(newEmp).then(function (data) {
                 //getAndRenderEmp();
-                renderActiveEmp();
+                displayAllEmployees()
             });
 
             closeEmployeePopup();
         }
 
-        function renderActiveEmp() {
-            
+        function displayAllEmployees() {
+            getEmps();
+        }
+
+        const getEmps = function () {
+            // return $.ajax({
+            //    url: "/api/emps",
+            //    method: "GET" 
+            // });
+
+            $.ajax({
+                url: "/api/emps",
+                method: "GET"
+            }).then(results => {
+                for (var i = 0; i < results.length; i++) {
+                    let fname = results[i].first_name;
+                    let lname = results[i].last_name;
+                    let tname = results[i].title;
+
+                    $("<div />", {
+                        text: fname + ' ' + lname + ' ' + tname
+                    }).appendTo("#empplaceholder")
+                }
+            });
         }
 
         const saveEmp = function (emp) {
@@ -50,6 +79,8 @@
                 method: "POST"
             });
         };
+
+        displayAllEmployees();
 
     </script>
 
@@ -111,7 +142,9 @@
     </div>
 
 
+    <div id="empplaceholder">
 
+    </div>
 
 
     <!-- <div class="container">

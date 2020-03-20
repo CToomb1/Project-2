@@ -22,6 +22,12 @@ app.get('/employees', (req, res) => {
     res.sendFile(path.join(__dirname, './public/employees.html'));
 });
 
+app.get('/api/emps', (req, res) => {
+    dbitems.viewEmp(function(results) {
+        res.json(results);
+    });
+});
+
 app.post('/api/emp', (req, res) => {
     dbitems.createEmp(req.body);
 });
