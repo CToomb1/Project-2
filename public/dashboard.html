@@ -2,54 +2,99 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schedule App</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schedule App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 
 <body>
-    <!-- NAVBAR -->
-    <nav class="navbar" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <a class="navbar-item" href="index.html">
-                <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduling App</h1>
-            </a>
+  <!-- NAVBAR -->
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="index.html">
+        <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduling App</h1>
+      </a>
 
-            <a role="button" class="navbar-burger burger navMobile" aria-label="menu" aria-expanded="false"
-                data-target="navbarBasicExample">
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-            </a>
-        </div>
+      <a role="button" class="navbar-burger burger navMobile" aria-label="menu" aria-expanded="false"
+        data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
 
-        <div id="navbarBasicExample" class="navbar-menu">
-            <div class="navbar-end">
-                <a class="navbar-item" href="employees.html">
-                    Employees
-                </a>
-                <a class="navbar-item" href="shifts.html">
-                    Shifts
-                </a>
-                <a class="navbar-item" href="dashboard.html">
-                    Dashboard
-                </a>
-            </div>
-        </div>
-        </div>
-    </nav>
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="/employees">
+          Employees
+        </a>
+        <a class="navbar-item" href="/shifts">
+          Shifts
+        </a>
+        <a class="navbar-item" href="/dashboard">
+          Dashboard
+        </a>
+      </div>
+    </div>
+    </div>
+    <div class="dropdown">
+      <button class="dropbtn" onclick="myFunction()">Dashboard
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-content" id="myDropdown">
+        <a href="#">
+          <shifts class="html"></shifts>
+        </a>
+        <a href="#">
+          <employees class="html"></employees>
+        </a>
+      </div>
+    </div>
+    </div>
+
+    <script>
+      function myFunction() {
+        document.getElementById("myDropdown").classList.toggle("show");
+      }
+      window.onclick = function (e) {
+        if (!e.target.matches('.dropbtn')) {
+          var myDropdown = document.getElementById("myDropdown");
+          if (myDropdown.classList.contains('show')) {
+            myDropdown.classList.remove('show');
+          }
+        }
+      }
+    </script>
+    <script>
+      function myFunction() {
+        document.getElementById("myDropdown").classList.toggle("show");
+      }
+
+      window.onclick = function (event) {
+        if (!event.target.matches('.dropbtn')) {
+          var dropdowns = document.getElementsByClassName("dropdown-content");
+          var i;
+          for (i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+              openDropdown.classList.remove('show');
+            }
+          }
+        }
+      }
+    </script>
+  </nav>
 
 
 
-    <!-- <div class="container">
-
+  <!-- <div class="container">
     <a class="btn btn-primary btn-lg mt-4" href="/notes" role="button">Get Started</a>
   </div> -->
 
-    <script src="index.js"></script>
+  <script src="index.js"></script>
 </body>
 
 </html>
