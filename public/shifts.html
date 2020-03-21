@@ -37,13 +37,17 @@
       var newShift = {
         name: shname,
         date: date,
-        start_time: stime,
-        end_time: etime,
+        start_time: formatDate(date, false) + ' ' + stime,
+        end_time: formatDate(date, false) + ' ' + etime,
         number_of_employees: empnum,
         comments: comments
       };
 
-      saveShift(newShift).then(function (data) {
+      $.ajax({
+        url: "/api/shifts",
+        data: newShift,
+        method: "POST"
+      }).then(function(data) {
         displayAllShifts();
       });
 
@@ -59,6 +63,7 @@
         url: "/api/shifts",
         method: "GET"
       }).then(results => {
+        $('#shplaceholder').empty();
         for (var i = 0; i < results.length; i++) {
           let theid = results[i].id;
           let name = results[i].name;
@@ -72,7 +77,7 @@
           cnt += '<h1>' + name;
 
           cnt += '<h2 class="subtitle">';
-          cnt += formatDate(day);
+          cnt += formatDate(day, true);
           cnt += ' ' + sttime.toLocaleTimeString();
           cnt += ' - ' + entime.toLocaleTimeString();
           cnt += '</h2>';
@@ -81,8 +86,6 @@
           }
           cnt += '</div>';
           cnt += '</section>';
-
-          //$("#shplaceholder").append(cnt);
 
           $("<div />", {
             html: cnt,
@@ -95,7 +98,7 @@
       });
     }
 
-    function formatDate(date) {
+    function formatDate(date, forDisplay) {
       var d = new Date(date),
         month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
@@ -106,16 +109,13 @@
       if (day.length < 2)
         day = '0' + day;
 
-      return [month, day, year].join('-');
+        if(forDisplay) {
+          return [month, day, year].join('-');
+        }
+        else {
+          return [year, month, day].join('-');
+        }
     }
-
-    const saveShift = function (shiftData) {
-      return $.ajax({
-        url: "/api/shifts",
-        data: shiftData,
-        method: "POST"
-      });
-    };
 
     function populateEmployeeDropdown() {
       $.ajax({
@@ -207,9 +207,9 @@
       </header>
       <section class="modal-card-body">
         <input type="text" id="shift_name" placeholder="Shift Name" />
-        <input type="text" id="date" placeholder="Date" />
-        <input type="text" id="start_time" placeholder="Start Time" />
-        <input type="text" id="end_time" placeholder="End Time" />
+        <input type="date" id="date" placeholder="Date" />
+        <input type="time" id="start_time" placeholder="Start Time" />
+        <input type="time" id="end_time" placeholder="End Time" />
         <input type="text" id="num_needed" placeholder="Number of Employees Needed" />
         <input type="text" id="comments" placeholder="Comments" />
       </section>

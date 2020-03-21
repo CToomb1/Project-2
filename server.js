@@ -39,11 +39,15 @@ app.get('/api/emps', (req, res) => {
 });
 
 app.post('/api/emp', (req, res) => {
-    dbitems.createEmp(req.body);
+    dbitems.createEmp(req.body).then(function(result) {
+        res.json(result);
+    });
 });
 
 app.post('/api/shifts', (req, res) => {
-    dbitems.createShift(req.body);
+    dbitems.createShift(req.body).then(function(result) {
+        res.json(result);
+    });
 });
 
 app.post('/api/assignshift', (req, res) => {

@@ -32,9 +32,12 @@
                 last_name: lname
             };
 
-            saveEmp(newEmp).then(function (data) {
-                //getAndRenderEmp();
-                displayAllEmployees()
+            $.ajax({
+                url: "/api/emp",
+                data: newEmp,
+                method: "POST"
+            }).then(function(data) {
+                displayAllEmployees();
             });
 
             closeEmployeePopup();
@@ -54,6 +57,7 @@
                 url: "/api/emps",
                 method: "GET"
             }).then(results => {
+                $("#empplaceholder").empty();
                 for (var i = 0; i < results.length; i++) {
                     let fname = results[i].first_name;
                     let lname = results[i].last_name;
@@ -77,14 +81,6 @@
                 }
             });
         }
-
-        const saveEmp = function (emp) {
-            return $.ajax({
-                url: "/api/emp",
-                data: emp,
-                method: "POST"
-            });
-        };
 
         displayAllEmployees();
 
