@@ -36,11 +36,16 @@ app.post('/api/shifts', (req, res) => {
     dbitems.createShift(req.body);
 });
 
+app.post('/api/assignshift', (req, res) => {
+    dbitems.assignEmp(req.body);
+});
+
 app.get('/api/shifts', (req, res) => {
     dbitems.viewShifts(function(results) {
         res.json(results);
     });
 });
+
 // if you have a front-end...use express.static('public')
 
 // turn on routes
