@@ -32,7 +32,7 @@ const createShift = ShiftDataObj => {
         reject(err);
         return;
       }
-      return (shiftData);
+      resolve(shiftData);
     });
   });
 };
