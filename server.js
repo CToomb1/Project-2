@@ -26,14 +26,24 @@ app.get('/employees', (req, res) => {
     res.sendFile(path.join(__dirname, './public/employees.html'));
 });
 
+app.get('/api/emps', (req, res) => {
+    dbitems.viewEmp(function(results) {
+        res.json(results);
+    });
+});
+
 app.post('/api/emp', (req, res) => {
     dbitems.createEmp(req.body);
-    console.log(req.body);
+});
+
+app.post('/api/shifts', (req, res) => {
+    dbitems.createShift(req.body);
 });
 
 app.get('/api/shifts', (req, res) => {
-    // let results = dbitems.viewShifts();
-    // res.json(results);
+    dbitems.viewShifts(function(results) {
+        res.json(results);
+    });
 });
 // if you have a front-end...use express.static('public')
 
