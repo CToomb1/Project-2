@@ -48,7 +48,7 @@ const assignEmp = assignObj => {
 };
 
 const viewShifts = (callBack) => {
-  let sqlquery = "SELECT s.id, name, day, start_time, end_time, num_needed, comments, count(a.id) AS assigned_count FROM scheduler.shift s LEFT OUTER JOIN assignment a ON a.shift_id = s.id ";
+  let sqlquery = "SELECT s.id, name, day, start_time, end_time, num_needed, comments, count(a.id) AS assigned_count FROM shift s LEFT OUTER JOIN assignment a ON a.shift_id = s.id ";
   connection.query(sqlquery, function(err, results) {
     callBack(results);
   });
