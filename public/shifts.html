@@ -83,12 +83,10 @@
     }
 
     const getShifts = function () {
-      alert("we are about to call server to get shifts.");
       $.ajax({
         url: "/api/shifts",
         method: "GET"
       }).then(results => {
-        alert("we got results from server")
         $('#shplaceholder').empty();
         for (var i = 0; i < results.length; i++) {
           let theid = results[i].id;
@@ -100,8 +98,6 @@
           let comments = results[i].comments;
           let assignedCount = results[i].assigned_count;
           let isAssigned = assignedCount >= num_needed;
-
-          alert("created all the variables");
 
           let cnt = '<section class="section">';
           cnt += '<div class="container shiftContainer">';
@@ -123,13 +119,9 @@
           cnt += '</div>';
           cnt += '</section>';
 
-          alert("created html content");
-
           $("<div />", {
             html: cnt
           }).appendTo("#shplaceholder");
-
-          alert("appended to shplaceholder");
         }
       });
     }
