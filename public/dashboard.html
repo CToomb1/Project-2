@@ -7,14 +7,39 @@
     <title>Schedule App</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script>
+
+        function retrieveData() {
+            $.ajax({
+                url: "/api/empshift",
+                method: "GET"
+            }).then(results => {
+                for (var i = 0; i < results.length; i++) {
+                    let assignid = results[i].id;
+                    let fname = results[i].first_name;
+                    let lname = results[i].last_name;
+                    let shname = results[i].name;
+                    let day = results[i].day;
+
+                    $("<div />", {
+                        text: fname + ' ' + lname + ' working ' + shname + ' on ' + day
+                    }).appendTo('#scheduledata');
+                }
+            });
+        }
+
+        retrieveData();
+    </script>
+
 </head>
 
 <body>
     <!-- NAVBAR -->
     <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-            <a class="navbar-item" href="index.html">
+            <a class="navbar-item" href="/">
                 <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduling App</h1>
             </a>
 
@@ -41,6 +66,8 @@
         </div>
         </div>
     </nav>
+
+    <div id="scheduledata"></div>
 
 
 

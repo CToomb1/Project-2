@@ -14,12 +14,22 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
+app.get('/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/dashboard.html'));
+});
+
 app.get('/shifts', (req, res) => {
     res.sendFile(path.join(__dirname, './public/shifts.html'));
 });
 
 app.get('/employees', (req, res) => {
     res.sendFile(path.join(__dirname, './public/employees.html'));
+});
+
+app.get('/api/empshift', (req, res) => {
+    dbitems.viewAssignment(function(result) {
+        res.json(result);
+    });
 });
 
 app.get('/api/emps', (req, res) => {

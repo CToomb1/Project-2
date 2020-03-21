@@ -61,6 +61,13 @@ const viewEmp = (callBack) => {
   });
 };
 
+const viewAssignment = (callBack) => {
+  let sqlquery = "SELECT a.id, e.first_name, e.last_name, s.name, s.day FROM assignment AS a INNER JOIN employee e ON a.employee_id = e.id INNER JOIN shift s ON a.shift_id = s.id";
+  connection.query(sqlquery, function(err, results) {
+    callBack(results);
+  });
+};
+
 const updateEmp = (empObj, empId) => {
   return new Promise((resolve, reject) => {
     connection.query('UPDATE employee SET ? WHERE id = ?', [empObj, empId], (err, empdata) => {
@@ -135,7 +142,8 @@ module.exports = {
   updateEmp,
   deleteEmp,
   deleteShift,
-  assignEmp
+  assignEmp,
+  viewAssignment
 
 };
 
