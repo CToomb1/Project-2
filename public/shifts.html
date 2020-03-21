@@ -8,6 +8,11 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
   <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <style>
+    .shiftContainer {
+      background-color: khaki;
+    }
+  </style>
 
   <script>
 
@@ -58,6 +63,25 @@
       getShifts();
     }
 
+    function deleteShift(shid) {
+      let delshift = {
+        shiftid: shid
+      };
+
+      $.ajax({
+        url: "/api/shift",
+        data: delshift,
+        method: "DELETE"
+      }).then(function(data) {
+        displayAllShifts();
+      });
+    }
+
+    function assignEmp(shid) {
+      shiftid = shid;
+      showAssignPopup();
+    }
+
     const getShifts = function () {
       $.ajax({
         url: "/api/shifts",
@@ -67,15 +91,23 @@
         for (var i = 0; i < results.length; i++) {
           let theid = results[i].id;
           let name = results[i].name;
+          let num_needed = results[i].num_needed;
           let day = results[i].day;
           let sttime = new Date(results[i].start_time);
           let entime = new Date(results[i].end_time);
           let comments = results[i].comments;
+          let assignedCount = results[i].assigned_count;
+          let isAssigned = assignedCount >= num_needed;
 
           let cnt = '<section class="section">';
-          cnt += '<div class="container">';
-          cnt += '<h1>' + name;
-
+          cnt += '<div class="container shiftContainer">';
+          cnt += '<h1>';
+          cnt += name;
+          if (!isAssigned) {
+            cnt += '<i onclick=assignEmp(' + theid + ') class="fas fa-user-plus"></i>';
+          }
+          cnt += '<i onclick=deleteShift(' + theid + ') class="fas fa-trash-alt"></i>';
+          cnt += '</h1>';
           cnt += '<h2 class="subtitle">';
           cnt += formatDate(day, true);
           cnt += ' ' + sttime.toLocaleTimeString();
@@ -88,11 +120,7 @@
           cnt += '</section>';
 
           $("<div />", {
-            html: cnt,
-            click: function () {
-              shiftid = theid;
-              showAssignPopup();
-            }
+            html: cnt
           }).appendTo("#shplaceholder");
         }
       });
@@ -149,6 +177,7 @@
         method: "POST"
       });
 
+      displayAllShifts();
       closeAssignPopup();
     }
 

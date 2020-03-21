@@ -50,6 +50,13 @@ app.post('/api/shifts', (req, res) => {
     });
 });
 
+app.delete('/api/shift', (req, res) => {
+    let shiftid = req.body.shiftid;
+    dbitems.deleteShift(shiftid).then(function(result) {
+        res.json(result);
+    });
+});
+
 app.post('/api/assignshift', (req, res) => {
     dbitems.assignEmp(req.body);
 });
