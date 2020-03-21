@@ -37,6 +37,16 @@ const createShift = ShiftDataObj => {
   });
 };
 
+const assignEmp = assignObj => {
+  let empid = assignObj.emp_id;
+  let shiftid = assignObj.shift_id;
+
+  let sqlquery = "INSERT INTO assignment (shift_id, employee_id) VALUES (?, ?) ";
+  connection.query(sqlquery, [shiftid, empid], function(err, result) {
+    
+  });
+};
+
 const viewShifts = (callBack) => {
   let sqlquery = "SELECT * FROM shift ";
   connection.query(sqlquery, function(err, results) {
@@ -46,6 +56,13 @@ const viewShifts = (callBack) => {
 
 const viewEmp = (callBack) => {
   let sqlquery = "SELECT * FROM employee ";
+  connection.query(sqlquery, function(err, results) {
+    callBack(results);
+  });
+};
+
+const viewAssignment = (callBack) => {
+  let sqlquery = "SELECT a.id, e.first_name, e.last_name, s.name, s.day FROM assignment AS a INNER JOIN employee e ON a.employee_id = e.id INNER JOIN shift s ON a.shift_id = s.id";
   connection.query(sqlquery, function(err, results) {
     callBack(results);
   });
@@ -124,7 +141,9 @@ module.exports = {
   updateShifts,
   updateEmp,
   deleteEmp,
-  deleteShift
+  deleteShift,
+  assignEmp,
+  viewAssignment
 
 };
 

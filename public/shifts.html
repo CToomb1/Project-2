@@ -10,6 +10,9 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
   <script>
+
+    let shiftid = 0;
+
     function createShifts() {
       $("#shiftcreatemodal").addClass("is-active");
       $("#date").val("");
@@ -18,6 +21,7 @@
       $("#num_needed").val("");
       $("#comments").val("");
     }
+
     function closeShiftsPopup() {
       $("#shiftcreatemodal").removeClass("is-active");
     }
@@ -56,21 +60,53 @@
         method: "GET"
       }).then(results => {
         for (var i = 0; i < results.length; i++) {
-          let shiftid = results[i].id;
+          let theid = results[i].id;
           let name = results[i].name;
           let day = results[i].day;
-          let sttime = results[i].start_time;
-          let entime = results[i].end_time;
+          let sttime = new Date(results[i].start_time);
+          let entime = new Date(results[i].end_time);
           let comments = results[i].comments;
 
+          let cnt = '<section class="section">';
+          cnt += '<div class="container">';
+          cnt += '<h1>' + name;
+
+          cnt += '<h2 class="subtitle">';
+          cnt += formatDate(day);
+          cnt += ' ' + sttime.toLocaleTimeString();
+          cnt += ' - ' + entime.toLocaleTimeString();
+          cnt += '</h2>';
+          if (comments) {
+            cnt += '<h2>' + comments + '</h2>';
+          }
+          cnt += '</div>';
+          cnt += '</section>';
+
+          //$("#shplaceholder").append(cnt);
+
           $("<div />", {
-            text: name + ' ' + day + ' ' + sttime + ' ' + entime + ' ' + comments,
-            click: function() {
-              handleShiftAssign();
+            html: cnt,
+            click: function () {
+              shiftid = theid;
+              showAssignPopup();
             }
           }).appendTo("#shplaceholder");
         }
       });
+    }
+
+    function formatDate(date) {
+      var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+      if (month.length < 2)
+        month = '0' + month;
+      if (day.length < 2)
+        day = '0' + day;
+
+      return [month, day, year].join('-');
     }
 
     const saveShift = function (shiftData) {
@@ -83,22 +119,37 @@
 
     function populateEmployeeDropdown() {
       $.ajax({
-                url: "/api/emps",
-                method: "GET"
-            }).then(results => {
-                for (var i = 0; i < results.length; i++) {
-                    let empid = results[i].id;
-                    let fname = results[i].first_name;
-                    let lname = results[i].last_name;
-                    let tname = results[i].title;
+        url: "/api/emps",
+        method: "GET"
+      }).then(results => {
+        for (var i = 0; i < results.length; i++) {
+          let empid = results[i].id;
+          let fname = results[i].first_name;
+          let lname = results[i].last_name;
+          let tname = results[i].title;
 
-                    $("#empselection").append('<option value=' + empid + '>' + fname + ' ' + lname + '</option>');
-                }
-            });
+          $("#empselection").append('<option value=' + empid + '>' + fname + ' ' + lname + '</option>');
+        }
+      });
+    }
+
+    function showAssignPopup() {
+      $("#assignshiftmodal").addClass("is-active");
     }
 
     function handleShiftAssign() {
-      $("#assignshiftmodal").addClass("is-active");
+      let empid = $("#empselection").val();
+      let assignobj = {
+        emp_id: empid,
+        shift_id: shiftid
+      };
+      $.ajax({
+        url: "/api/assignshift",
+        data: assignobj,
+        method: "POST"
+      });
+
+      closeAssignPopup();
     }
 
     function closeAssignPopup() {
@@ -115,7 +166,7 @@
   <!-- NAVBAR -->
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a class="navbar-item" href="index.html">
+      <a class="navbar-item" href="/">
         <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduling App</h1>
       </a>
 
@@ -145,7 +196,7 @@
 
 
   <!-- Create shifts button -->
-  <input type="button" value="Create Shifts" onclick="createShifts()">
+  <input type="button" value="Create Shifts" class="button is-info" onclick="createShifts()">
 
   <div id="shiftcreatemodal" class="modal">
     <div class="modal-background"></div>
@@ -177,7 +228,9 @@
         <button class="delete" onclick="closeAssignPopup()" aria-label="close"></button>
       </header>
       <section class="modal-card-body">
-        <select id="empselection"></select>
+        <div class="select">
+          <select id="empselection"></select>
+        </div>
       </section>
       <footer class="modal-card-foot">
         <button onclick="handleShiftAssign()" class="button is-success">Save</button>
