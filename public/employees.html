@@ -9,14 +9,8 @@
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-    <style type="text/css">
-        .empRecord {
-            color:red;
-        }
-    </style>
-
     <script>
-        
+
         function createEmployees() {
             $(".modal").addClass("is-active");
             $("#first_name").val("");
@@ -65,9 +59,21 @@
                     let lname = results[i].last_name;
                     let tname = results[i].title;
 
-                    $("<div />", {
-                        text: fname + ' ' + lname + ' ' + tname
-                    }).appendTo("#empplaceholder");
+                    let cnt = '<section class="section">';
+                    cnt += '<div class="container">';
+                    cnt += '<h1>' + fname + ' ' + lname + '</h1>';
+                    cnt += '<h2 class="subtitle">';
+                    cnt += tname;
+                    cnt += '</h2>';
+                    cnt += '</div>';
+                    cnt += '</section>';
+
+                    $("#empplaceholder").append(cnt);
+
+
+                    // $("<div />", {
+                    //     text: fname + ' ' + lname + ' ' + tname
+                    // }).appendTo("#empplaceholder");
                 }
             });
         }
@@ -120,7 +126,7 @@
 
 
     <!-- Create employees button -->
-    <input type="button" value="Create Employees" onclick="createEmployees()">
+    <input type="button" value="Create Employees" class="button is-info" onclick="createEmployees()">
 
     <div class="modal">
         <div class="modal-background"></div>
@@ -143,7 +149,6 @@
 
 
     <div id="empplaceholder">
-
     </div>
 
 

@@ -63,12 +63,29 @@
           let theid = results[i].id;
           let name = results[i].name;
           let day = results[i].day;
-          let sttime = results[i].start_time;
-          let entime = results[i].end_time;
+          let sttime = new Date(results[i].start_time);
+          let entime = new Date(results[i].end_time);
           let comments = results[i].comments;
 
+          let cnt = '<section class="section">';
+          cnt += '<div class="container">';
+          cnt += '<h1>' + name;
+
+          cnt += '<h2 class="subtitle">';
+          cnt += formatDate(day);
+          cnt += ' ' + sttime.toLocaleTimeString();
+          cnt += ' - ' + entime.toLocaleTimeString();
+          cnt += '</h2>';
+          if (comments) {
+            cnt += '<h2>' + comments + '</h2>';
+          }
+          cnt += '</div>';
+          cnt += '</section>';
+
+          //$("#shplaceholder").append(cnt);
+
           $("<div />", {
-            text: name + ' ' + day + ' ' + sttime + ' ' + entime + ' ' + comments,
+            html: cnt,
             click: function () {
               shiftid = theid;
               showAssignPopup();
@@ -76,6 +93,20 @@
           }).appendTo("#shplaceholder");
         }
       });
+    }
+
+    function formatDate(date) {
+      var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+      if (month.length < 2)
+        month = '0' + month;
+      if (day.length < 2)
+        day = '0' + day;
+
+      return [month, day, year].join('-');
     }
 
     const saveShift = function (shiftData) {
@@ -165,7 +196,7 @@
 
 
   <!-- Create shifts button -->
-  <input type="button" value="Create Shifts" onclick="createShifts()">
+  <input type="button" value="Create Shifts" class="button is-info" onclick="createShifts()">
 
   <div id="shiftcreatemodal" class="modal">
     <div class="modal-background"></div>
@@ -197,7 +228,9 @@
         <button class="delete" onclick="closeAssignPopup()" aria-label="close"></button>
       </header>
       <section class="modal-card-body">
-        <select id="empselection"></select>
+        <div class="select">
+          <select id="empselection"></select>
+        </div>
       </section>
       <footer class="modal-card-foot">
         <button onclick="handleShiftAssign()" class="button is-success">Save</button>
