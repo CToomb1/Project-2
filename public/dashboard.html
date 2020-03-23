@@ -9,6 +9,12 @@
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
+    <link href="fullcalendar/core/main.css" rel="stylesheet" />
+    <link href="fullcalendar/daygrid/main.css" rel="stylesheet" />
+
+    <script src="fullcalendar/core/main.js"></script>
+    <script src="fullcalendar/daygrid/main.js"></script>
+
     <script>
 
         function retrieveData() {
@@ -22,25 +28,62 @@
                     let lname = results[i].last_name;
                     let shname = results[i].name;
                     let day = results[i].day;
+                    let sttime = results[i].start_time;
+                    let etime = results[i].end_time;
 
                     let cnt = '<section class="section">';
                     cnt += '<div class="container">';
                     cnt += '<h1>' + fname + " " + lname;
                     cnt += '<h1>' + shname;
                     cnt += '<h2 class="subtitle">';
-                    cnt += formatDate(day);
+                    cnt += formatDate(day, true);
 
                     cnt += '</div>';
                     cnt += '</section>';
 
-                    $("<div />", {
-                        html: cnt
-                    }).appendTo('#scheduledata');
+                    // $("<div />", {
+                    //     html: cnt
+                    // }).appendTo('#scheduledata');
+                    let event = {
+                        title: fname + " " + lname,
+                        start: '2020-03-01T00:00:00',
+                        allDay: true
+                    }
+                    thecalendar.addEvent(event, assignid);
+                    thecalendar.render();
+                    alert(event.start);
                 }
             });
         }
 
-        function formatDate(date) {
+        function retrieveCalendarData(callback) {
+            $.ajax({
+                url: "/api/empshift",
+                method: "GET"
+            }).then(results => {
+                let arr = [];
+                for (var i = 0; i < results.length; i++) {
+                    let assignid = results[i].id;
+                    let fname = results[i].first_name;
+                    let lname = results[i].last_name;
+                    let shname = results[i].name;
+                    let day = results[i].day;
+                    let sttime = results[i].start_time;
+                    let etime = results[i].end_time;
+
+                    let obj = {
+                        id: assignid,
+                        first_name: fname,
+                        last_name: lname,
+                        theday: day
+                    };
+                    arr.push(obj);
+                }
+                callback(arr);
+            });
+        }
+
+        function formatDate(date, forDisplay) {
             var d = new Date(date),
                 month = '' + (d.getMonth() + 1),
                 day = '' + d.getDate(),
@@ -51,12 +94,40 @@
             if (day.length < 2)
                 day = '0' + day;
 
-            return [month, day, year].join('-');
+            if (forDisplay) {
+                return [month, day, year].join('-');
+            }
+            else {
+                return [year, month, day].join('-');
+            }
         }
 
-        retrieveData();
-    </script>
+        function initializeCalendar(results) {
+                var calendarEl = document.getElementById('calendar');
 
+                // retrieveCalendarData.then(function(results) {
+                //     alert(results);
+                // });
+                let theevents = [];
+                for (var i = 0; i < results.length; i++) {
+                    let ev = {
+                        id: results[i].id,
+                        title: results[i].first_name,
+                        start: results[i].theday,
+                        allDay: true
+                    };
+                    theevents.push(ev);
+                }
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    plugins: ['dayGrid'],
+                    events: theevents
+                });
+
+                calendar.render();
+        }
+
+        retrieveCalendarData(initializeCalendar);
+    </script>
 </head>
 
 <body>
@@ -88,17 +159,11 @@
                 </a>
             </div>
         </div>
-        </div>
     </nav>
 
+    <div id="calendar"></div>
     <div id="scheduledata"></div>
 
-
-
-    <!-- <div class="container">
-
-    <a class="btn btn-primary btn-lg mt-4" href="/notes" role="button">Get Started</a>
-  </div> -->
 
 </body>
 
