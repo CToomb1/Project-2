@@ -57,6 +57,10 @@ const viewShifts = (callBack) => {
 const viewEmp = (callBack) => {
   let sqlquery = "SELECT * FROM employee ";
   connection.query(sqlquery, function(err, results) {
+    if(err) {
+      consola.log(err);
+      return;
+    }
     callBack(results);
   });
 };
