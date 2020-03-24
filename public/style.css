@@ -1,0 +1,14 @@
+body {
+    height: 100vh;
+    background: linear-gradient(#9198e5, #e66465);
+}
+
+.navbar {
+    background-color: inherit;
+}
+
+#calendar {
+    height: 20vh;
+    width: 60vw;
+    margin: 0 auto;
+}
