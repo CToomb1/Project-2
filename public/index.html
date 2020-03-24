@@ -9,6 +9,18 @@
   <link rel="stylesheet" href="style.css">
   <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+  <script>
+    function navbarBurgerClick() {
+    if($('.navbar-burger').hasClass('is-active')){
+      $('.navbar-burger').removeClass('is-active');
+      $('.navbar-menu').removeClass('is-active');
+    }else {
+      $('.navbar-burger').addClass('is-active');
+      $('.navbar-menu').addClass('is-active');
+    }
+  }
+  </script>
 </head>
 
 <body>
@@ -16,10 +28,10 @@
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <a class="navbar-item" href="/">
-        <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduling App</h1>
+        <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduler</h1>
       </a>
 
-      <a role="button" class="navbar-burger burger navMobile" aria-label="menu" aria-expanded="false"
+      <a role="button" onclick="navbarBurgerClick()" class="navbar-burger burger navMobile" aria-label="menu" aria-expanded="false"
         data-target="navbarBasicExample">
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>

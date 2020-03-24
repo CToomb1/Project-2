@@ -6,42 +6,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Schedule App</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+  <link rel="stylesheet" href="style.css">
   <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <style>
-
-    .hero {
-      margin: 4em;
-      border-radius: 1em;
-    }
-
-    .buttonmargin {
-      margin-top: 3em;
-      margin-left: 4em;
-    }
-
-    .righticons {
-      width: 100%;
-      justify-content: flex-end;
-      text-align: right;
-    }
-
-    .righticon {
-      margin-left: 1em;
-      cursor: pointer;
-    }
-
-    .shiftname {
-      min-width: 9em;
-    }
-
-    .title {
-      display: flex;
-    }
-    
-  </style>
 
   <script>
+
+    function navbarBurgerClick() {
+      if ($('.navbar-burger').hasClass('is-active')) {
+        $('.navbar-burger').removeClass('is-active');
+        $('.navbar-menu').removeClass('is-active');
+      } else {
+        $('.navbar-burger').addClass('is-active');
+        $('.navbar-menu').addClass('is-active');
+      }
+    }
 
     let shiftid = 0;
 
@@ -79,7 +58,7 @@
         url: "/api/shifts",
         data: newShift,
         method: "POST"
-      }).then(function(data) {
+      }).then(function (data) {
         displayAllShifts();
       });
 
@@ -99,7 +78,7 @@
         url: "/api/shift",
         data: delshift,
         method: "DELETE"
-      }).then(function(data) {
+      }).then(function (data) {
         displayAllShifts();
       });
     }
@@ -126,7 +105,7 @@
           let assignedCount = results[i].assigned_count;
           let isAssigned = assignedCount >= num_needed;
 
-          let cnt = '<section class="hero is-info is-bold">';
+          let cnt = '<section class="hero is-dark">';
           cnt += '<figure>';
           cnt += '<div class="hero-body">';
           cnt += '<div class="container">';
@@ -143,9 +122,12 @@
           cnt += '</h1>';
           cnt += '<h2 class="subtitle">';
           cnt += formatDate(day, true);
-          cnt += ' ' + sttime.toLocaleTimeString();
-          cnt += ' - ' + entime.toLocaleTimeString();
+          cnt += ' ' + sttime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+          cnt += ' - ' + entime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
           cnt += '</h2>';
+          cnt += '<h4>';
+          cnt += isAssigned ? 'Shift filled!' : '# Needed ' + (num_needed - assignedCount);
+          cnt += '</h4>';
           if (comments) {
             cnt += '<h2>' + comments + '</h2>';
           }
@@ -172,12 +154,12 @@
       if (day.length < 2)
         day = '0' + day;
 
-        if(forDisplay) {
-          return [month, day, year].join('-');
-        }
-        else {
-          return [year, month, day].join('-');
-        }
+      if (forDisplay) {
+        return [month, day, year].join('-');
+      }
+      else {
+        return [year, month, day].join('-');
+      }
     }
 
     function populateEmployeeDropdown() {
@@ -231,11 +213,11 @@
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <a class="navbar-item" href="/">
-        <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduling App</h1>
+        <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduler</h1>
       </a>
 
-      <a role="button" class="navbar-burger burger navMobile" aria-label="menu" aria-expanded="false"
-        data-target="navbarBasicExample">
+      <a role="button" onclick="navbarBurgerClick()" class="navbar-burger burger navMobile" aria-label="menu"
+        aria-expanded="false" data-target="navbarBasicExample">
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
@@ -258,12 +240,6 @@
     </div>
   </nav>
 
-
-  <!-- Create shifts button -->
-  <div class="buttonmargin">
-    <input type="button" value="Create Shifts" class="button is-info" onclick="createShifts()">
-  </div>
-
   <div id="shiftcreatemodal" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -272,12 +248,12 @@
         <button class="delete" onclick="closeShiftsPopup()" aria-label="close"></button>
       </header>
       <section class="modal-card-body">
-        <input type="text" id="shift_name" placeholder="Shift Name" />
-        <input type="date" id="date" placeholder="Date" />
-        <input type="time" id="start_time" placeholder="Start Time" />
-        <input type="time" id="end_time" placeholder="End Time" />
-        <input type="text" id="num_needed" placeholder="Number of Employees Needed" />
-        <input type="text" id="comments" placeholder="Comments" />
+        <input type="text" class="input inputmargin" id="shift_name" placeholder="Shift Name" />
+        <input type="date" class="input inputmargin" id="date" placeholder="Date" />
+        <input type="time" class="input inputmargin" id="start_time" placeholder="Start Time" />
+        <input type="time" class="input inputmargin" id="end_time" placeholder="End Time" />
+        <input type="text" class="input inputmargin" id="num_needed" placeholder="Number of Employees Needed" />
+        <input type="text" class="input inputmargin" id="comments" placeholder="Comments" />
       </section>
       <footer class="modal-card-foot">
         <button onclick="handleShiftSave()" class="button is-success">Save</button>
@@ -305,7 +281,14 @@
     </div>
   </div>
 
-  <div id="shplaceholder"></div>
+  <div class="shiftcontent customscroll">
+    <div class="buttonmargin">
+      <input type="button" value="Create Shifts" class="button is-dark" onclick="createShifts()">
+    </div>
+
+    <div id="shplaceholder"></div>
+  </div>
+
 
   <!-- <div class="container">
     <a class="btn btn-primary btn-lg mt-4" href="/notes" role="button">Get Started</a>
