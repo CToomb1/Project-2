@@ -58,6 +58,20 @@ app.delete('/api/shift', (req, res) => {
     });
 });
 
+app.delete('/api/emp', (req, res) => {
+    let empid = req.body.empid;
+    dbitems.deleteEmp(empid).then(function(result) {
+        res.json(result);
+    });
+});
+
+app.delete('/api/assignment', (req, res) => {
+    let assignid = req.body.assignid;
+    dbitems.deleteAssignment(assignid).then(function(result) {
+        res.json(result);
+    });
+});
+
 app.post('/api/assignshift', (req, res) => {
     dbitems.assignEmp(req.body);
 });

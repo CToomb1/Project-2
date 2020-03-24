@@ -107,12 +107,27 @@ const deleteEmp = empId => {
     connection.query('DELETE FROM employee WHERE id = ?', [empId], (err, empdata) => {
       if (err) {
         console.log(err);
-        return reject(err);
+        reject(err);
       } else if (empdata.affectedRows === 0) {
-        return resolve({ message: "Couldn't find a emp with that id!", code: 404 });
+       resolve({ message: "Couldn't find a emp with that id!", code: 404 });
       }
 
       resolve({ message: 'Employee deleted successfully!', code: 200 });
+    });
+  });
+};
+
+const deleteAssignment = assignId => {
+  return new Promise((resolve, reject) => {
+    connection.query('DELETE FROM assignment WHERE id = ?', [assignId], (err, assigndata) => {
+      if (err) {
+        console.log(err);
+        reject(err);
+      } else if (assigndata.affectedRows === 0) {
+       resolve({ message: "Couldn't find an assignment with that id!", code: 404 });
+      }
+
+      resolve({ message: 'Assignment deleted successfully!', code: 200 });
     });
   });
 };
@@ -147,7 +162,8 @@ module.exports = {
   deleteEmp,
   deleteShift,
   assignEmp,
-  viewAssignment
+  viewAssignment,
+  deleteAssignment
 
 };
 
