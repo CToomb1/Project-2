@@ -9,9 +9,36 @@
   <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <style>
-    .shiftContainer {
-      background-color: khaki;
+
+    .hero {
+      margin: 4em;
+      border-radius: 1em;
     }
+
+    .buttonmargin {
+      margin-top: 3em;
+      margin-left: 4em;
+    }
+
+    .righticons {
+      width: 100%;
+      justify-content: flex-end;
+      text-align: right;
+    }
+
+    .righticon {
+      margin-left: 1em;
+      cursor: pointer;
+    }
+
+    .shiftname {
+      min-width: 9em;
+    }
+
+    .title {
+      display: flex;
+    }
+    
   </style>
 
   <script>
@@ -99,14 +126,20 @@
           let assignedCount = results[i].assigned_count;
           let isAssigned = assignedCount >= num_needed;
 
-          let cnt = '<section class="section">';
-          cnt += '<div class="container shiftContainer">';
-          cnt += '<h1>';
+          let cnt = '<section class="hero is-info is-bold">';
+          cnt += '<figure>';
+          cnt += '<div class="hero-body">';
+          cnt += '<div class="container">';
+          cnt += '<h1 class="title">';
+          cnt += '<div class="shiftname">';
           cnt += name;
+          cnt += '</div>';
+          cnt += '<div class="righticons">';
           if (!isAssigned) {
-            cnt += '<i onclick=assignEmp(' + theid + ') class="fas fa-user-plus"></i>';
+            cnt += '<i onclick=assignEmp(' + theid + ') class="righticon fas fa-user-plus"></i>';
           }
-          cnt += '<i onclick=deleteShift(' + theid + ') class="fas fa-trash-alt"></i>';
+          cnt += '<i onclick=deleteShift(' + theid + ') class="righticon fas fa-trash-alt"></i>';
+          cnt += '</div>';
           cnt += '</h1>';
           cnt += '<h2 class="subtitle">';
           cnt += formatDate(day, true);
@@ -117,6 +150,8 @@
             cnt += '<h2>' + comments + '</h2>';
           }
           cnt += '</div>';
+          cnt += '</div>';
+          cnt += '</figure>';
           cnt += '</section>';
 
           $("<div />", {
@@ -225,7 +260,9 @@
 
 
   <!-- Create shifts button -->
-  <input type="button" value="Create Shifts" class="button is-info" onclick="createShifts()">
+  <div class="buttonmargin">
+    <input type="button" value="Create Shifts" class="button is-info" onclick="createShifts()">
+  </div>
 
   <div id="shiftcreatemodal" class="modal">
     <div class="modal-background"></div>
