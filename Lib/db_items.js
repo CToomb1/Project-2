@@ -32,7 +32,7 @@ const createShift = ShiftDataObj => {
         reject(err);
         return;
       }
-      return (shiftData);
+      resolve(shiftData);
     });
   });
 };
@@ -48,7 +48,7 @@ const assignEmp = assignObj => {
 };
 
 const viewShifts = (callBack) => {
-  let sqlquery = "SELECT * FROM shift ";
+  let sqlquery = "SELECT id, name, day, start_time, end_time, num_needed, comments, (SELECT count(*) FROM assignment WHERE shift.id = assignment.shift_id) AS assigned_count FROM shift";
   connection.query(sqlquery, function(err, results) {
     callBack(results);
   });
@@ -57,6 +57,10 @@ const viewShifts = (callBack) => {
 const viewEmp = (callBack) => {
   let sqlquery = "SELECT * FROM employee ";
   connection.query(sqlquery, function(err, results) {
+    if(err) {
+      consola.log(err);
+      return;
+    }
     callBack(results);
   });
 };
@@ -103,12 +107,27 @@ const deleteEmp = empId => {
     connection.query('DELETE FROM employee WHERE id = ?', [empId], (err, empdata) => {
       if (err) {
         console.log(err);
-        return reject(err);
+        reject(err);
       } else if (empdata.affectedRows === 0) {
-        return resolve({ message: "Couldn't find a emp with that id!", code: 404 });
+       resolve({ message: "Couldn't find a emp with that id!", code: 404 });
       }
 
       resolve({ message: 'Employee deleted successfully!', code: 200 });
+    });
+  });
+};
+
+const deleteAssignment = assignId => {
+  return new Promise((resolve, reject) => {
+    connection.query('DELETE FROM assignment WHERE id = ?', [assignId], (err, assigndata) => {
+      if (err) {
+        console.log(err);
+        reject(err);
+      } else if (assigndata.affectedRows === 0) {
+       resolve({ message: "Couldn't find an assignment with that id!", code: 404 });
+      }
+
+      resolve({ message: 'Assignment deleted successfully!', code: 200 });
     });
   });
 };
@@ -143,7 +162,8 @@ module.exports = {
   deleteEmp,
   deleteShift,
   assignEmp,
-  viewAssignment
+  viewAssignment,
+  deleteAssignment
 
 };
 

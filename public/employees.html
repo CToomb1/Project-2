@@ -6,10 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Schedule App</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+    <link rel="stylesheet" href="style.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <script>
+
+        function navbarBurgerClick() {
+            if ($('.navbar-burger').hasClass('is-active')) {
+                $('.navbar-burger').removeClass('is-active');
+                $('.navbar-menu').removeClass('is-active');
+            } else {
+                $('.navbar-burger').addClass('is-active');
+                $('.navbar-menu').addClass('is-active');
+            }
+        }
 
         function createEmployees() {
             $(".modal").addClass("is-active");
@@ -32,12 +43,28 @@
                 last_name: lname
             };
 
-            saveEmp(newEmp).then(function (data) {
-                //getAndRenderEmp();
-                displayAllEmployees()
+            $.ajax({
+                url: "/api/emp",
+                data: newEmp,
+                method: "POST"
+            }).then(function (data) {
+                displayAllEmployees();
             });
 
             closeEmployeePopup();
+        }
+
+        function deleteEmp(empid) {
+            let delEmp = {
+                empid: empid
+            }
+            $.ajax({
+                url: '/api/emp',
+                data: delEmp,
+                method: 'DELETE'
+            }).then(function (data) {
+                displayAllEmployees();
+            });
         }
 
         function displayAllEmployees() {
@@ -54,37 +81,37 @@
                 url: "/api/emps",
                 method: "GET"
             }).then(results => {
+                $("#empplaceholder").empty();
                 for (var i = 0; i < results.length; i++) {
+                    let theid = results[i].id;
                     let fname = results[i].first_name;
                     let lname = results[i].last_name;
                     let tname = results[i].title;
 
-                    let cnt = '<section class="section">';
+                    let cnt = '<section class="hero is-dark">';
+                    cnt += '<figure>';
+                    cnt += '<div class="hero-body">';
                     cnt += '<div class="container">';
+                    cnt += '<h1 class="title">';
+                    cnt += '<div class="shiftname">';
                     cnt += '<h1>' + fname + ' ' + lname + '</h1>';
+                    cnt += '</div>';
+                    cnt += '<div class="righticons">';
+                    cnt += '<i onclick=deleteEmp(' + theid + ') class="righticon fas fa-trash-alt"></i>';
+                    cnt += '</div>';
+                    cnt += '</h1>';
                     cnt += '<h2 class="subtitle">';
                     cnt += tname;
                     cnt += '</h2>';
                     cnt += '</div>';
+                    cnt += '</div>';
+                    cnt += '</figure>';
                     cnt += '</section>';
 
                     $("#empplaceholder").append(cnt);
-
-
-                    // $("<div />", {
-                    //     text: fname + ' ' + lname + ' ' + tname
-                    // }).appendTo("#empplaceholder");
                 }
             });
         }
-
-        const saveEmp = function (emp) {
-            return $.ajax({
-                url: "/api/emp",
-                data: emp,
-                method: "POST"
-            });
-        };
 
         displayAllEmployees();
 
@@ -97,10 +124,10 @@
     <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="/">
-                <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduling App</h1>
+                <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduler</h1>
             </a>
 
-            <a role="button" class="navbar-burger burger navMobile" aria-label="menu" aria-expanded="false"
+            <a role="button" onclick="navbarBurgerClick()" class="navbar-burger burger navMobile" aria-label="menu" aria-expanded="false"
                 data-target="navbarBasicExample">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
@@ -124,10 +151,6 @@
         </div>
     </nav>
 
-
-    <!-- Create employees button -->
-    <input type="button" value="Create Employees" class="button is-info" onclick="createEmployees()">
-
     <div class="modal">
         <div class="modal-background"></div>
         <div class="modal-card">
@@ -136,9 +159,9 @@
                 <button class="delete" onclick="closeEmployeePopup()" aria-label="close"></button>
             </header>
             <section class="modal-card-body">
-                <input type="text" id="first_name" placeholder="Employee First Name" />
-                <input type="text" id="last_name" placeholder="Employee Last Name" />
-                <input type="text" id="title" placeholder="Employee Title" />
+                <input type="text" class="input inputmargin" id="first_name" placeholder="Employee First Name" />
+                <input type="text" class="input inputmargin" id="last_name" placeholder="Employee Last Name" />
+                <input type="text" class="input inputmargin" id="title" placeholder="Employee Title" />
             </section>
             <footer class="modal-card-foot">
                 <button onclick="handleEmpSave()" class="button is-success">Save</button>
@@ -147,16 +170,12 @@
         </div>
     </div>
 
-
-    <div id="empplaceholder">
+    <div class="shiftcontent customscroll">
+        <div class="buttonmargin">
+            <input type="button" value="Create Employees" class="button is-dark" onclick="createEmployees()">
+        </div>
+        <div id="empplaceholder"></div>
     </div>
-
-
-    <!-- <div class="container">
-
-    <a class="btn btn-primary btn-lg mt-4" href="/notes" role="button">Get Started</a>
-  </div> -->
-
 
 </body>
 

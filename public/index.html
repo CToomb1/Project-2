@@ -6,8 +6,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Schedule App</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+  <link rel="stylesheet" href="style.css">
   <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+  <script>
+    function navbarBurgerClick() {
+    if($('.navbar-burger').hasClass('is-active')){
+      $('.navbar-burger').removeClass('is-active');
+      $('.navbar-menu').removeClass('is-active');
+    }else {
+      $('.navbar-burger').addClass('is-active');
+      $('.navbar-menu').addClass('is-active');
+    }
+  }
+  </script>
 </head>
 
 <body>
@@ -15,10 +28,10 @@
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <a class="navbar-item" href="/">
-        <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduling App</h1>
+        <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduler</h1>
       </a>
 
-      <a role="button" class="navbar-burger burger navMobile" aria-label="menu" aria-expanded="false"
+      <a role="button" onclick="navbarBurgerClick()" class="navbar-burger burger navMobile" aria-label="menu" aria-expanded="false"
         data-target="navbarBasicExample">
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
@@ -42,22 +55,15 @@
     </div>
   </nav>
 
+  <div class="landing">
+    <span class="landingtag">Stress-Free Scheduler At Your Fingertips</span>
+    <br />
+    <br />
+    <br />
+    <a href="/employees"><button class="button is-dark is-medium">Get Started!</button></a>
+  </div>
 
 
-  <!-- <div class="container">
-
-    <a class="btn btn-primary btn-lg mt-4" href="/notes" role="button">Get Started</a>
-  </div> -->
-
-  <script src="index.js"></script>
 </body>
 
 </html>
-
-
-
-<!-- <a class="btn btn-primary btn-lg mt-4" href="/shifts" role="button">Get Started</a>
-    </div>
-  </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="4index.js"></script> -->

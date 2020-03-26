@@ -6,10 +6,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Schedule App</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+  <link rel="stylesheet" href="style.css">
   <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
   <script>
+
+    function navbarBurgerClick() {
+      if ($('.navbar-burger').hasClass('is-active')) {
+        $('.navbar-burger').removeClass('is-active');
+        $('.navbar-menu').removeClass('is-active');
+      } else {
+        $('.navbar-burger').addClass('is-active');
+        $('.navbar-menu').addClass('is-active');
+      }
+    }
 
     let shiftid = 0;
 
@@ -37,13 +48,17 @@
       var newShift = {
         name: shname,
         date: date,
-        start_time: stime,
-        end_time: etime,
+        start_time: formatDate(date, false) + ' ' + stime,
+        end_time: formatDate(date, false) + ' ' + etime,
         number_of_employees: empnum,
         comments: comments
       };
 
-      saveShift(newShift).then(function (data) {
+      $.ajax({
+        url: "/api/shifts",
+        data: newShift,
+        method: "POST"
+      }).then(function (data) {
         displayAllShifts();
       });
 
@@ -54,48 +69,81 @@
       getShifts();
     }
 
+    function deleteShift(shid) {
+      let delshift = {
+        shiftid: shid
+      };
+
+      $.ajax({
+        url: "/api/shift",
+        data: delshift,
+        method: "DELETE"
+      }).then(function (data) {
+        displayAllShifts();
+      });
+    }
+
+    function assignEmp(shid) {
+      shiftid = shid;
+      showAssignPopup();
+    }
+
     const getShifts = function () {
       $.ajax({
         url: "/api/shifts",
         method: "GET"
       }).then(results => {
+        $('#shplaceholder').empty();
         for (var i = 0; i < results.length; i++) {
           let theid = results[i].id;
           let name = results[i].name;
+          let num_needed = results[i].num_needed;
           let day = results[i].day;
           let sttime = new Date(results[i].start_time);
           let entime = new Date(results[i].end_time);
           let comments = results[i].comments;
+          let assignedCount = results[i].assigned_count;
+          let isAssigned = assignedCount >= num_needed;
 
-          let cnt = '<section class="section">';
+          let cnt = '<section class="hero is-dark">';
+          cnt += '<figure>';
+          cnt += '<div class="hero-body">';
           cnt += '<div class="container">';
-          cnt += '<h1>' + name;
-
+          cnt += '<h1 class="title">';
+          cnt += '<div class="shiftname">';
+          cnt += name;
+          cnt += '</div>';
+          cnt += '<div class="righticons">';
+          if (!isAssigned) {
+            cnt += '<i onclick=assignEmp(' + theid + ') class="righticon fas fa-user-plus"></i>';
+          }
+          cnt += '<i onclick=deleteShift(' + theid + ') class="righticon fas fa-trash-alt"></i>';
+          cnt += '</div>';
+          cnt += '</h1>';
           cnt += '<h2 class="subtitle">';
-          cnt += formatDate(day);
-          cnt += ' ' + sttime.toLocaleTimeString();
-          cnt += ' - ' + entime.toLocaleTimeString();
+          cnt += formatDate(day, true);
+          cnt += ' ' + sttime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+          cnt += ' - ' + entime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
           cnt += '</h2>';
+          cnt += '<h4>';
+          cnt += isAssigned ? 'Shift filled!' : '# Needed ' + (num_needed - assignedCount);
+          cnt += '</h4>';
           if (comments) {
             cnt += '<h2>' + comments + '</h2>';
           }
           cnt += '</div>';
+          cnt += '</div>';
+          cnt += '</figure>';
           cnt += '</section>';
 
-          //$("#shplaceholder").append(cnt);
-
           $("<div />", {
-            html: cnt,
-            click: function () {
-              shiftid = theid;
-              showAssignPopup();
-            }
+            html: cnt
           }).appendTo("#shplaceholder");
         }
       });
     }
 
-    function formatDate(date) {
+    function formatDate(date, forDisplay) {
       var d = new Date(date),
         month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
@@ -106,16 +154,13 @@
       if (day.length < 2)
         day = '0' + day;
 
-      return [month, day, year].join('-');
+      if (forDisplay) {
+        return [month, day, year].join('-');
+      }
+      else {
+        return [year, month, day].join('-');
+      }
     }
-
-    const saveShift = function (shiftData) {
-      return $.ajax({
-        url: "/api/shifts",
-        data: shiftData,
-        method: "POST"
-      });
-    };
 
     function populateEmployeeDropdown() {
       $.ajax({
@@ -149,6 +194,7 @@
         method: "POST"
       });
 
+      displayAllShifts();
       closeAssignPopup();
     }
 
@@ -167,11 +213,11 @@
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <a class="navbar-item" href="/">
-        <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduling App</h1>
+        <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduler</h1>
       </a>
 
-      <a role="button" class="navbar-burger burger navMobile" aria-label="menu" aria-expanded="false"
-        data-target="navbarBasicExample">
+      <a role="button" onclick="navbarBurgerClick()" class="navbar-burger burger navMobile" aria-label="menu"
+        aria-expanded="false" data-target="navbarBasicExample">
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
@@ -194,10 +240,6 @@
     </div>
   </nav>
 
-
-  <!-- Create shifts button -->
-  <input type="button" value="Create Shifts" class="button is-info" onclick="createShifts()">
-
   <div id="shiftcreatemodal" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -206,12 +248,12 @@
         <button class="delete" onclick="closeShiftsPopup()" aria-label="close"></button>
       </header>
       <section class="modal-card-body">
-        <input type="text" id="shift_name" placeholder="Shift Name" />
-        <input type="text" id="date" placeholder="Date" />
-        <input type="text" id="start_time" placeholder="Start Time" />
-        <input type="text" id="end_time" placeholder="End Time" />
-        <input type="text" id="num_needed" placeholder="Number of Employees Needed" />
-        <input type="text" id="comments" placeholder="Comments" />
+        <input type="text" class="input inputmargin" id="shift_name" placeholder="Shift Name" />
+        <input type="date" class="input inputmargin" id="date" placeholder="Date" />
+        <input type="time" class="input inputmargin" id="start_time" placeholder="Start Time" />
+        <input type="time" class="input inputmargin" id="end_time" placeholder="End Time" />
+        <input type="text" class="input inputmargin" id="num_needed" placeholder="Number of Employees Needed" />
+        <input type="text" class="input inputmargin" id="comments" placeholder="Comments" />
       </section>
       <footer class="modal-card-foot">
         <button onclick="handleShiftSave()" class="button is-success">Save</button>
@@ -239,14 +281,14 @@
     </div>
   </div>
 
-  <div id="shplaceholder"></div>
+  <div class="shiftcontent customscroll">
+    <div class="buttonmargin">
+      <input type="button" value="Create Shifts" class="button is-dark" onclick="createShifts()">
+    </div>
 
-  <!-- <div class="container">
+    <div id="shplaceholder"></div>
+  </div>
 
-    <a class="btn btn-primary btn-lg mt-4" href="/notes" role="button">Get Started</a>
-  </div> -->
-
-  <script src="index.js"></script>
 </body>
 
 </html>
