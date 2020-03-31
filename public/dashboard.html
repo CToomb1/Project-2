@@ -7,19 +7,188 @@
     <title>Schedule App</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <link href="fullcalendar/core/main.css" rel="stylesheet" />
+    <link href="fullcalendar/daygrid/main.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="fullcalendar/core/main.js"></script>
+    <script src="fullcalendar/daygrid/main.js"></script>
+
+    <style type="text/css">
+        h2 {
+            font-weight: 600;
+        }
+    </style>
+
+    <script>
+
+        function navbarBurgerClick() {
+            if ($('.navbar-burger').hasClass('is-active')) {
+                $('.navbar-burger').removeClass('is-active');
+                $('.navbar-menu').removeClass('is-active');
+            } else {
+                $('.navbar-burger').addClass('is-active');
+                $('.navbar-menu').addClass('is-active');
+            }
+        }
+
+        function retrieveData() {
+            $.ajax({
+                url: "/api/empshift",
+                method: "GET"
+            }).then(results => {
+                for (var i = 0; i < results.length; i++) {
+                    let assignid = results[i].id;
+                    let fname = results[i].first_name;
+                    let lname = results[i].last_name;
+                    let shname = results[i].name;
+                    let day = results[i].day;
+                    let sttime = results[i].start_time;
+                    let etime = results[i].end_time;
+
+                    let cnt = '<section class="section">';
+                    cnt += '<div class="container">';
+                    cnt += '<h1>' + fname + " " + lname;
+                    cnt += '<h1>' + shname;
+                    cnt += '<h2 class="subtitle">';
+                    cnt += formatDate(day, true);
+
+                    cnt += '</div>';
+                    cnt += '</section>';
+
+                    // $("<div />", {
+                    //     html: cnt
+                    // }).appendTo('#scheduledata');
+                    let event = {
+                        title: fname + " " + lname,
+                        start: day,
+                        allDay: true
+                    }
+                    thecalendar.addEvent(event, assignid);
+                    thecalendar.render();
+                    alert(event.start);
+                }
+            });
+        }
+
+        function retrieveCalendarData(callback) {
+            $.ajax({
+                url: "/api/empshift",
+                method: "GET"
+            }).then(results => {
+                let arr = [];
+                for (var i = 0; i < results.length; i++) {
+                    let assignid = results[i].id;
+                    let fname = results[i].first_name;
+                    let lname = results[i].last_name;
+                    let shname = results[i].name;
+                    let day = results[i].day;
+                    let sttime = results[i].start_time;
+                    let etime = results[i].end_time;
+
+                    let obj = {
+                        id: assignid,
+                        first_name: fname,
+                        last_name: lname,
+                        theday: day,
+                        shiftname: shname
+                    };
+                    arr.push(obj);
+                }
+                callback(arr);
+            });
+        }
+
+        function formatDate(date, forDisplay) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            if (forDisplay) {
+                return [month, day, year].join('-');
+            }
+            else {
+                return [year, month, day].join('-');
+            }
+        }
+
+        function initializeCalendar(results) {
+            var calendarEl = document.getElementById('calendar');
+
+            // retrieveCalendarData.then(function(results) {
+            //     alert(results);
+            // });
+
+            let theevents = [];
+            for (var i = 0; i < results.length; i++) {
+                let tname = results[i].first_name + " " + results[i].last_name;
+                tname += "\n";
+                tname += results[i].shiftname;
+                let ev = {
+                    id: results[i].id,
+                    title: tname,
+                    start: results[i].theday,
+                    allDay: true
+                };
+                theevents.push(ev);
+            }
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: ['dayGrid'],
+                events: theevents,
+                eventColor: '#363636',
+                eventClick: function (info) {
+                    let eventid = info.event.id;
+                    clickedAssignment = eventid;
+                    $("#deleteassignmodal").addClass("is-active");
+                }
+            });
+
+            calendar.render();
+        }
+
+        function closeDeleteAssignment() {
+            $("#deleteassignmodal").removeClass("is-active");
+        }
+
+        function handleDeleteAssignment() {
+            let delAssign = {
+                assignid: clickedAssignment
+            };
+            $.ajax({
+                url: "/api/assignment",
+                method: "DELETE",
+                data: delAssign
+            }).then(results => {
+                closeDeleteAssignment();
+                retrieveCalendarData(initializeCalendar);
+            });
+        }
+
+        let clickedAssignment = 0;
+
+        retrieveCalendarData(initializeCalendar);
+    </script>
 </head>
 
 <body>
     <!-- NAVBAR -->
     <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-            <a class="navbar-item" href="index.html">
-                <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduling App</h1>
+            <a class="navbar-item" href="/">
+                <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduler</h1>
             </a>
 
-            <a role="button" class="navbar-burger burger navMobile" aria-label="menu" aria-expanded="false"
-                data-target="navbarBasicExample">
+            <a role="button" onclick="navbarBurgerClick()" class="navbar-burger burger navMobile" aria-label="menu"
+                aria-expanded="false" data-target="navbarBasicExample">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
@@ -39,17 +208,29 @@
                 </a>
             </div>
         </div>
-        </div>
     </nav>
 
+    <div class="calendarcontainer customscroll">
+        <div id="calendar"></div>
+    </div>
 
+    <div id="deleteassignmodal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Delete Assignment</p>
+                <button class="delete" onclick="closeDeleteAssignment()" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                Are you sure you want to delete this assignment?
+            </section>
+            <footer class="modal-card-foot">
+                <button onclick="handleDeleteAssignment()" class="button is-danger">Delete</button>
+                <button onclick="closeDeleteAssignment()" class="button">Cancel</button>
+            </footer>
+        </div>
+    </div>
 
-    <!-- <div class="container">
-
-    <a class="btn btn-primary btn-lg mt-4" href="/notes" role="button">Get Started</a>
-  </div> -->
-
-    <script src="index.js"></script>
 </body>
 
 </html>

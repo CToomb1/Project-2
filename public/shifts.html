@@ -6,20 +6,218 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Schedule App</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+  <link rel="stylesheet" href="style.css">
   <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+  <script>
+
+    function navbarBurgerClick() {
+      if ($('.navbar-burger').hasClass('is-active')) {
+        $('.navbar-burger').removeClass('is-active');
+        $('.navbar-menu').removeClass('is-active');
+      } else {
+        $('.navbar-burger').addClass('is-active');
+        $('.navbar-menu').addClass('is-active');
+      }
+    }
+
+    let shiftid = 0;
+
+    function createShifts() {
+      $("#shiftcreatemodal").addClass("is-active");
+      $("#date").val("");
+      $("#start_time").val("");
+      $("#end_time").val("");
+      $("#num_needed").val("");
+      $("#comments").val("");
+    }
+
+    function closeShiftsPopup() {
+      $("#shiftcreatemodal").removeClass("is-active");
+    }
+
+    function handleShiftSave() {
+      let date = $("#date").val();
+      let stime = $("#start_time").val();
+      let etime = $("#end_time").val();
+      let empnum = $("#num_needed").val();
+      let comments = $("#comments").val();
+      let shname = $("#shift_name").val();
+
+      var newShift = {
+        name: shname,
+        date: date,
+        start_time: formatDate(date, false) + ' ' + stime,
+        end_time: formatDate(date, false) + ' ' + etime,
+        number_of_employees: empnum,
+        comments: comments
+      };
+
+      $.ajax({
+        url: "/api/shifts",
+        data: newShift,
+        method: "POST"
+      }).then(function (data) {
+        displayAllShifts();
+      });
+
+      closeShiftsPopup();
+    }
+
+    function displayAllShifts() {
+      getShifts();
+    }
+
+    function deleteShift(shid) {
+      let delshift = {
+        shiftid: shid
+      };
+
+      $.ajax({
+        url: "/api/shift",
+        data: delshift,
+        method: "DELETE"
+      }).then(function (data) {
+        displayAllShifts();
+      });
+    }
+
+    function assignEmp(shid) {
+      shiftid = shid;
+      showAssignPopup();
+    }
+
+    const getShifts = function () {
+      $.ajax({
+        url: "/api/shifts",
+        method: "GET"
+      }).then(results => {
+        $('#shplaceholder').empty();
+        for (var i = 0; i < results.length; i++) {
+          let theid = results[i].id;
+          let name = results[i].name;
+          let num_needed = results[i].num_needed;
+          let day = results[i].day;
+          let sttime = new Date(results[i].start_time);
+          let entime = new Date(results[i].end_time);
+          let comments = results[i].comments;
+          let assignedCount = results[i].assigned_count;
+          let isAssigned = assignedCount >= num_needed;
+
+          let cnt = '<section class="hero is-dark">';
+          cnt += '<figure>';
+          cnt += '<div class="hero-body">';
+          cnt += '<div class="container">';
+          cnt += '<h1 class="title">';
+          cnt += '<div class="shiftname">';
+          cnt += name;
+          cnt += '</div>';
+          cnt += '<div class="righticons">';
+          if (!isAssigned) {
+            cnt += '<i onclick=assignEmp(' + theid + ') class="righticon fas fa-user-plus"></i>';
+          }
+          cnt += '<i onclick=deleteShift(' + theid + ') class="righticon fas fa-trash-alt"></i>';
+          cnt += '</div>';
+          cnt += '</h1>';
+          cnt += '<h2 class="subtitle">';
+          cnt += formatDate(day, true);
+          cnt += ' ' + sttime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+          cnt += ' - ' + entime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+          cnt += '</h2>';
+          cnt += '<h4>';
+          cnt += isAssigned ? 'Shift filled!' : '# Needed ' + (num_needed - assignedCount);
+          cnt += '</h4>';
+          if (comments) {
+            cnt += '<h2>' + comments + '</h2>';
+          }
+          cnt += '</div>';
+          cnt += '</div>';
+          cnt += '</figure>';
+          cnt += '</section>';
+
+          $("<div />", {
+            html: cnt
+          }).appendTo("#shplaceholder");
+        }
+      });
+    }
+
+    function formatDate(date, forDisplay) {
+      var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+      if (month.length < 2)
+        month = '0' + month;
+      if (day.length < 2)
+        day = '0' + day;
+
+      if (forDisplay) {
+        return [month, day, year].join('-');
+      }
+      else {
+        return [year, month, day].join('-');
+      }
+    }
+
+    function populateEmployeeDropdown() {
+      $.ajax({
+        url: "/api/emps",
+        method: "GET"
+      }).then(results => {
+        for (var i = 0; i < results.length; i++) {
+          let empid = results[i].id;
+          let fname = results[i].first_name;
+          let lname = results[i].last_name;
+          let tname = results[i].title;
+
+          $("#empselection").append('<option value=' + empid + '>' + fname + ' ' + lname + '</option>');
+        }
+      });
+    }
+
+    function showAssignPopup() {
+      $("#assignshiftmodal").addClass("is-active");
+    }
+
+    function handleShiftAssign() {
+      let empid = $("#empselection").val();
+      let assignobj = {
+        emp_id: empid,
+        shift_id: shiftid
+      };
+      $.ajax({
+        url: "/api/assignshift",
+        data: assignobj,
+        method: "POST"
+      });
+
+      displayAllShifts();
+      closeAssignPopup();
+    }
+
+    function closeAssignPopup() {
+      $("#assignshiftmodal").removeClass("is-active");
+    }
+
+    displayAllShifts();
+    populateEmployeeDropdown();
+
+  </script>
 </head>
 
 <body>
   <!-- NAVBAR -->
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a class="navbar-item" href="index.html">
-        <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduling App</h1>
+      <a class="navbar-item" href="/">
+        <h1 class="is-size-2"><i class="far fa-calendar-alt"></i> Scheduler</h1>
       </a>
 
-      <a role="button" class="navbar-burger burger navMobile" aria-label="menu" aria-expanded="false"
-        data-target="navbarBasicExample">
+      <a role="button" onclick="navbarBurgerClick()" class="navbar-burger burger navMobile" aria-label="menu"
+        aria-expanded="false" data-target="navbarBasicExample">
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
@@ -42,14 +240,55 @@
     </div>
   </nav>
 
+  <div id="shiftcreatemodal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Create New Shift</p>
+        <button class="delete" onclick="closeShiftsPopup()" aria-label="close"></button>
+      </header>
+      <section class="modal-card-body">
+        <input type="text" class="input inputmargin" id="shift_name" placeholder="Shift Name" />
+        <input type="date" class="input inputmargin" id="date" placeholder="Date" />
+        <input type="time" class="input inputmargin" id="start_time" placeholder="Start Time" />
+        <input type="time" class="input inputmargin" id="end_time" placeholder="End Time" />
+        <input type="text" class="input inputmargin" id="num_needed" placeholder="Number of Employees Needed" />
+        <input type="text" class="input inputmargin" id="comments" placeholder="Comments" />
+      </section>
+      <footer class="modal-card-foot">
+        <button onclick="handleShiftSave()" class="button is-success">Save</button>
+        <button onclick="closeShiftsPopup()" class="button">Cancel</button>
+      </footer>
+    </div>
+  </div>
 
+  <div id="assignshiftmodal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Assign Shift</p>
+        <button class="delete" onclick="closeAssignPopup()" aria-label="close"></button>
+      </header>
+      <section class="modal-card-body">
+        <div class="select">
+          <select id="empselection"></select>
+        </div>
+      </section>
+      <footer class="modal-card-foot">
+        <button onclick="handleShiftAssign()" class="button is-success">Save</button>
+        <button onclick="closeAssignPopup()" class="button">Cancel</button>
+      </footer>
+    </div>
+  </div>
 
-  <!-- <div class="container">
+  <div class="shiftcontent customscroll">
+    <div class="buttonmargin">
+      <input type="button" value="Create Shifts" class="button is-dark" onclick="createShifts()">
+    </div>
 
-    <a class="btn btn-primary btn-lg mt-4" href="/notes" role="button">Get Started</a>
-  </div> -->
+    <div id="shplaceholder"></div>
+  </div>
 
-  <script src="index.js"></script>
 </body>
 
 </html>
